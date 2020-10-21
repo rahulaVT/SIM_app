@@ -10,24 +10,9 @@ import {
   Typography,
   Button,
 } from "@material-ui/core/";
+import useStyles from "./useStyles";
+import { useForm, Form } from "./useForm";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "80%",
-    margin: "10px auto",
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 300,
-  },
-  title: {
-    fontSize: 18,
-  },
-}));
 const initialDeviceValues = {
   id: 0,
   deviceName: "",
@@ -39,7 +24,8 @@ const initialDeviceValues = {
 
 export default function DeviceForm() {
   const classes = useStyles();
-  const [values, setValues] = useState(initialDeviceValues);
+  const { values, setValues, handleInputChange } = useForm(initialDeviceValues);
+
   const [selectedNetworks, setSelectedNetworks] = useState([]);
   const [selectedVisibility, setSelectedVisibility] = useState([]);
   const handleNetworkChange = (event) => {
@@ -54,12 +40,14 @@ export default function DeviceForm() {
       <Typography className={classes.title} color="textPrimary" gutterBottom>
         Add Devices
       </Typography>
-      <form>
+      <Form>
         <div>
           <TextField
             label="Device Name"
             margin="normal"
+            name="deviceName"
             value={values.deviceName}
+            onChange={handleInputChange}
           ></TextField>
         </div>
         <div>
@@ -150,7 +138,7 @@ export default function DeviceForm() {
             Delete
           </Button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import {
   Select,
   TextField,
-  makeStyles,
   MenuItem,
   InputLabel,
   FormControl,
-  Input,
   RadioGroup,
   FormLabel,
   FormControlLabel,
@@ -14,24 +12,9 @@ import {
   Typography,
   Button,
 } from "@material-ui/core/";
+import useStyles from "./useStyles";
+import { useForm, Form } from "./useForm";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "80%",
-    margin: "10px auto",
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 300,
-  },
-  title: {
-    fontSize: 18,
-  },
-}));
 const initialPhysicalConnectionValues = {
   connectionName: "",
   sources: ["space1", "space2", "space3"],
@@ -41,7 +24,10 @@ const initialPhysicalConnectionValues = {
 
 export default function PhysicalConnectionForm() {
   const classes = useStyles();
-  const [values, setValues] = useState(initialPhysicalConnectionValues);
+  const { values, setValues, handleInputChange } = useForm(
+    initialPhysicalConnectionValues
+  );
+
   const [selectedAccessValue, setSelectedAccessValue] = useState("");
 
   const handleChange = (event) => {
@@ -52,12 +38,14 @@ export default function PhysicalConnectionForm() {
       <Typography className={classes.title} color="textPrimary" gutterBottom>
         Create Physical Connection
       </Typography>
-      <form>
+      <Form>
         <div>
           <TextField
             label="Connection Name"
             margin="normal"
+            name="connectionName"
             value={values.connectionName}
+            onChange={handleInputChange}
           ></TextField>
         </div>
         <div>
@@ -141,7 +129,7 @@ export default function PhysicalConnectionForm() {
             Delete
           </Button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

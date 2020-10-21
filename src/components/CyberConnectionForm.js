@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import {
   Select,
-  TextField,
-  makeStyles,
   MenuItem,
   InputLabel,
   FormControl,
-  Input,
   RadioGroup,
   FormLabel,
   FormControlLabel,
@@ -14,24 +11,8 @@ import {
   Typography,
   Button,
 } from "@material-ui/core/";
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "80%",
-    margin: "10px auto",
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-    maxWidth: 300,
-  },
-  title: {
-    fontSize: 18,
-  },
-}));
+import useStyles from "./useStyles";
+import { useForm, Form } from "./useForm";
 
 const initialCyberConnectionValues = {
   sources: ["device1", "device2", "device3"],
@@ -41,6 +22,10 @@ const initialCyberConnectionValues = {
 };
 export default function CyberConnectionForm() {
   const classes = useStyles();
+  const { values, setValues, handleInputChange } = useForm(
+    initialCyberConnectionValues
+  );
+
   const [selectedTargets, setSelectedTargets] = useState([]);
   const handleTargetChange = (event) => {
     setSelectedTargets(event.target.value);
@@ -54,7 +39,7 @@ export default function CyberConnectionForm() {
       <Typography className={classes.title} color="textPrimary" gutterBottom>
         Create Cyber Connection
       </Typography>
-      <form>
+      <Form>
         <div>
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel id="select-connection-source-label">Source</InputLabel>
@@ -154,7 +139,7 @@ export default function CyberConnectionForm() {
             Delete
           </Button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

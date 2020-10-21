@@ -1,4 +1,4 @@
-import { Grid, makeStyles } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import {
   Button,
@@ -16,16 +16,9 @@ import {
 } from "@material-ui/core";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { useForm, Form } from "./useForm";
+import styles from "./useStyles";
 
-const useStyles = makeStyles({
-  root: {
-    width: "80%",
-    margin: "10px auto",
-  },
-  title: {
-    fontSize: 18,
-  },
-});
 const initialSpaceValues = {
   id: 0,
   spaceName: "",
@@ -40,19 +33,22 @@ function generate(element) {
   );
 }
 export default function SpaceForm() {
-  const classes = useStyles();
-  const [values, setValues] = useState(initialSpaceValues);
+  const classes = styles();
+  const { values, setValues, handleInputChange } = useForm(initialSpaceValues);
+
   return (
     <div>
       <Typography className={classes.title} color="textPrimary" gutterBottom>
         Add Spaces
       </Typography>
-      <form className={classes.form}>
+      <Form>
         <div>
           <TextField
             label="Space Name"
             margin="normal"
+            name="spaceName"
             value={values.spaceName}
+            onChange={handleInputChange}
           ></TextField>
         </div>
         <div>
@@ -60,15 +56,19 @@ export default function SpaceForm() {
             label="Area(m^2)"
             type="number"
             margin="normal"
+            name="area"
             value={values.area}
+            onChange={handleInputChange}
           ></TextField>
         </div>
         <div>
           <TextField
             label="Level"
-            ype="number"
+            type="number"
             margin="normal"
+            name="level"
             value={values.level}
+            onChange={handleInputChange}
           ></TextField>
         </div>
         <div>
@@ -79,7 +79,7 @@ export default function SpaceForm() {
             Delete
           </Button>
         </div>
-      </form>
+      </Form>
       <List dense={false}>
         {generate(
           <ListItem>
