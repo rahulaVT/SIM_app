@@ -12,6 +12,7 @@ import {
 } from "@material-ui/core/";
 import useStyles from "./useStyles";
 import { useForm, Form } from "./useForm";
+import { CList } from "../components/controls/List";
 
 const initialDeviceValues = {
   id: 0,
@@ -21,11 +22,11 @@ const initialDeviceValues = {
   networks: ["WIFI", "bluetooth", "Google", "Amazon", "FB portal"],
   visibility: ["space1", "space2", "space3"],
 };
-
+const initialDevices = [];
 export default function DeviceForm() {
   const classes = useStyles();
   const { values, setValues, handleInputChange } = useForm(initialDeviceValues);
-
+  const [devices, setDevices] = useState(initialDevices);
   const [selectedNetworks, setSelectedNetworks] = useState([]);
   const [selectedVisibility, setSelectedVisibility] = useState([]);
   const handleNetworkChange = (event) => {
@@ -34,7 +35,22 @@ export default function DeviceForm() {
   const handleVisibilityChange = (event) => {
     setSelectedVisibility(event.target.value);
   };
+  const handleAdd = (event) => {
+    // check for duplicates
 
+    // if (spaces.some((item) => values["spaceName"] === item["spaceName"])) {
+    //   setIsInputInvalid(true);
+    //   //   return;
+    // } else {
+    //   setIsInputInvalid(false);
+    //   setSpaces((spaces) => [...spaces, values]);
+    // }
+    setDevices((devices) => [...devices, values]);
+  };
+  const handleDelete = (name) => {
+    const newItems = devices.filter((item) => item["deviceName"] !== name);
+    setDevices(newItems);
+  };
   return (
     <div>
       <Typography className={classes.title} color="textPrimary" gutterBottom>
@@ -131,14 +147,19 @@ export default function DeviceForm() {
           </FormControl>
         </div>
         <div>
-          <Button type="submit" color="primary">
+          <Button color="primary" onClick={handleAdd}>
             Add
           </Button>
-          <Button type="submit" color="primary">
+          {/* <Button type="submit" color="primary">
             Delete
-          </Button>
+          </Button> */}
         </div>
       </Form>
+      <CList
+        items={devices}
+        name="deviceName"
+        handleChildDelete={handleDelete}
+      ></CList>
     </div>
   );
 }

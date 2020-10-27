@@ -1,40 +1,39 @@
 import { Grid } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Card,
-  Paper,
-  TextField,
-  List,
-  ListItem,
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
-  IconButton,
-  ListItemSecondaryAction,
-  Typography,
-} from "@material-ui/core";
-import FolderIcon from "@material-ui/icons/Folder";
-import DeleteIcon from "@material-ui/icons/Delete";
+import { Button, Card, Paper, TextField, Typography } from "@material-ui/core";
+
 import { useForm, Form } from "./useForm";
 import styles from "./useStyles";
-
+import { CList } from "../components/controls/List";
 const initialSpaceValues = {
-  id: 0,
+  id: "",
   spaceName: "",
   area: 0,
   level: 0,
 };
-function generate(element) {
-  return [0, 1, 2].map((value) =>
-    React.cloneElement(element, {
-      key: value,
-    })
-  );
-}
+const initialSpaces = [];
 export default function SpaceForm() {
   const classes = styles();
   const { values, setValues, handleInputChange } = useForm(initialSpaceValues);
+  const [spaces, setSpaces] = useState(initialSpaces);
+  const [isInputInvalid, setIsInputInvalid] = useState(false);
+
+  const handleAdd = (event) => {
+    // check for duplicates
+
+    if (spaces.some((item) => values["spaceName"] === item["spaceName"])) {
+      setIsInputInvalid(true);
+      //   return;
+    } else {
+      setIsInputInvalid(false);
+      setSpaces((spaces) => [...spaces, values]);
+    }
+  };
+  //handle delete and pass it as a prop
+  const handleDelete = (name) => {
+    const newItems = spaces.filter((item) => item["spaceName"] !== name);
+    setSpaces(newItems);
+  };
 
   return (
     <div>
@@ -48,7 +47,10 @@ export default function SpaceForm() {
             margin="normal"
             name="spaceName"
             value={values.spaceName}
+            id={values.spaceName}
             onChange={handleInputChange}
+            error={isInputInvalid}
+            helperText={isInputInvalid && "name should be unique"}
           ></TextField>
         </div>
         <div>
@@ -58,6 +60,7 @@ export default function SpaceForm() {
             margin="normal"
             name="area"
             value={values.area}
+            id={values.spaceName}
             onChange={handleInputChange}
           ></TextField>
         </div>
@@ -68,38 +71,24 @@ export default function SpaceForm() {
             margin="normal"
             name="level"
             value={values.level}
+            id={values.spaceName}
             onChange={handleInputChange}
           ></TextField>
         </div>
         <div>
-          <Button type="submit" color="primary">
+          <Button color="primary" onClick={handleAdd}>
             Add
           </Button>
-          <Button type="submit" color="primary">
+          {/* <Button type="submit" color="primary">
             Delete
-          </Button>
+          </Button> */}
         </div>
       </Form>
-      <List dense={false}>
-        {generate(
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar>
-                <FolderIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary="Single-line item"
-              // secondary={secondary ? 'Secondary text' : null}
-            />
-            <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="delete">
-                <DeleteIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        )}
-      </List>
+      <CList
+        items={spaces}
+        name="spaceName"
+        handleChildDelete={handleDelete}
+      ></CList>
     </div>
   );
 }

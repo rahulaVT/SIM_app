@@ -3,10 +3,13 @@ import styles from "./useStyles";
 export function useForm(initialFValues) {
   const [values, setValues] = useState(initialFValues);
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    // console.log(e.target);
+    const { name, value, id } = e.target;
+    // console.log(name, value);
     setValues({
       ...values,
       [name]: value,
+      id: id,
     });
   };
   return {
