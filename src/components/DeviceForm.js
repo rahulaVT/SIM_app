@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Select,
   TextField,
@@ -13,8 +13,9 @@ import {
 import useStyles from "./useStyles";
 import { useForm, Form } from "./useForm";
 import { CList } from "../components/controls/List";
+import { UserContext } from "../UserContext";
 
-const initialDeviceValues = {
+let initialDeviceValues = {
   id: 0,
   deviceName: "",
   type: ["type1", "type2"],
@@ -24,16 +25,24 @@ const initialDeviceValues = {
 };
 const initialDevices = [];
 export default function DeviceForm() {
+  const { data, setData } = useContext(UserContext);
+
+  if (data.Spaces.length > 0) {
+    initialDeviceValues.placement = data.Spaces.map((a) => a.spaceName);
+    initialDeviceValues.visibility = data.Spaces.map((a) => a.spaceName);
+  }
   const classes = useStyles();
   const { values, setValues, handleInputChange } = useForm(initialDeviceValues);
-  const [devices, setDevices] = useState(initialDevices);
+
   const [selectedNetworks, setSelectedNetworks] = useState([]);
   const [selectedVisibility, setSelectedVisibility] = useState([]);
   const handleNetworkChange = (event) => {
     setSelectedNetworks(event.target.value);
+    setValues((values) => ({ ...values, networks: event.target.value }));
   };
   const handleVisibilityChange = (event) => {
     setSelectedVisibility(event.target.value);
+    setValues((values) => ({ ...values, visibility: event.target.value }));
   };
   const handleAdd = (event) => {
     // check for duplicates
@@ -45,11 +54,14 @@ export default function DeviceForm() {
     //   setIsInputInvalid(false);
     //   setSpaces((spaces) => [...spaces, values]);
     // }
-    setDevices((devices) => [...devices, values]);
+    setData((data) => ({ ...data, Devices: [...data.Devices, values] }));
+    // setDevices((devices) => [...devices, values]);
+    // setData((data)=>({}))
   };
   const handleDelete = (name) => {
-    const newItems = devices.filter((item) => item["deviceName"] !== name);
-    setDevices(newItems);
+    const newItems = data.Devices.filter((item) => item["deviceName"] !== name);
+    // setDevices(newItems);
+    setData((data) => ({ ...data, Devices: newItems }));
   };
   return (
     <div>
@@ -73,7 +85,8 @@ export default function DeviceForm() {
               labelId="select-device-type-label"
               id="select-device-type"
               variant="outlined"
-              // onChange={handleChange}
+              name="type"
+              onChange={handleInputChange}
             >
               {initialDeviceValues.type.map((t) => (
                 <MenuItem key={t} value={t}>
@@ -92,7 +105,7 @@ export default function DeviceForm() {
               variant="outlined"
               // onChange={handleChange}
             >
-              {initialDeviceValues.type.map((t) => (
+              {initialDeviceValues.placement.map((t) => (
                 <MenuItem key={t} value={t}>
                   {t}
                 </MenuItem>
@@ -156,7 +169,7 @@ export default function DeviceForm() {
         </div>
       </Form>
       <CList
-        items={devices}
+        items={data.Devices}
         name="deviceName"
         handleChildDelete={handleDelete}
       ></CList>

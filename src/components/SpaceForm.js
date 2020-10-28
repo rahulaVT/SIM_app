@@ -1,38 +1,40 @@
-import { Grid } from "@material-ui/core";
-import React, { useState, useEffect } from "react";
-import { Button, Card, Paper, TextField, Typography } from "@material-ui/core";
+import React, { useState, useContext } from "react";
+import { Button, TextField, Typography } from "@material-ui/core";
 
 import { useForm, Form } from "./useForm";
 import styles from "./useStyles";
 import { CList } from "../components/controls/List";
+import { UserContext } from "../UserContext";
 const initialSpaceValues = {
   id: "",
   spaceName: "",
   area: 0,
   level: 0,
 };
-const initialSpaces = [];
+// const initialSpaces = [];
 export default function SpaceForm() {
+  const { data, setData } = useContext(UserContext);
   const classes = styles();
   const { values, setValues, handleInputChange } = useForm(initialSpaceValues);
-  const [spaces, setSpaces] = useState(initialSpaces);
+  //   const [spaces, setSpaces] = useState(initialSpaces);
   const [isInputInvalid, setIsInputInvalid] = useState(false);
 
   const handleAdd = (event) => {
     // check for duplicates
 
-    if (spaces.some((item) => values["spaceName"] === item["spaceName"])) {
+    if (data.Spaces.some((item) => values["spaceName"] === item["spaceName"])) {
       setIsInputInvalid(true);
       //   return;
     } else {
       setIsInputInvalid(false);
-      setSpaces((spaces) => [...spaces, values]);
+      //   setSpaces((spaces) => [...spaces, values]);
+      setData((data) => ({ ...data, Spaces: [...data.Spaces, values] }));
     }
   };
   //handle delete and pass it as a prop
   const handleDelete = (name) => {
-    const newItems = spaces.filter((item) => item["spaceName"] !== name);
-    setSpaces(newItems);
+    const newItems = data.Spaces.filter((item) => item["spaceName"] !== name);
+    setData((data) => ({ ...data, Spaces: newItems }));
   };
 
   return (
@@ -85,7 +87,7 @@ export default function SpaceForm() {
         </div>
       </Form>
       <CList
-        items={spaces}
+        items={data.Spaces}
         name="spaceName"
         handleChildDelete={handleDelete}
       ></CList>

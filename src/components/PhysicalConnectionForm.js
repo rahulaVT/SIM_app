@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Select,
   TextField,
@@ -14,24 +14,54 @@ import {
 } from "@material-ui/core/";
 import useStyles from "./useStyles";
 import { useForm, Form } from "./useForm";
+import { CList } from "../components/controls/List";
+import { UserContext } from "../UserContext";
 
 const initialPhysicalConnectionValues = {
   connectionName: "",
   sources: ["space1", "space2", "space3"],
   targets: ["space1", "space2", "space3"],
   type: ["door", "window"],
+  lock: "no",
 };
 
 export default function PhysicalConnectionForm() {
   const classes = useStyles();
+  const { data, setData } = useContext(UserContext);
   const { values, setValues, handleInputChange } = useForm(
     initialPhysicalConnectionValues
   );
+  if (data.Spaces.length > 0) {
+    initialPhysicalConnectionValues.sources = data.Spaces.map(
+      (a) => a.spaceName
+    );
+    initialPhysicalConnectionValues.targets = data.Spaces.map(
+      (a) => a.spaceName
+    );
+  }
+  const handleAdd = (event) => {
+    // check for duplicates
 
-  const [selectedAccessValue, setSelectedAccessValue] = useState("");
-
-  const handleChange = (event) => {
-    setSelectedAccessValue(event.target.value);
+    // if (spaces.some((item) => values["spaceName"] === item["spaceName"])) {
+    //   setIsInputInvalid(true);
+    //   //   return;
+    // } else {
+    //   setIsInputInvalid(false);
+    //   setSpaces((spaces) => [...spaces, values]);
+    // }
+    setData((data) => ({
+      ...data,
+      PhysicalConnection: [...data.PhysicalConnection, values],
+    }));
+    // setDevices((devices) => [...devices, values]);
+    // setData((data)=>({}))
+  };
+  const handleDelete = (name) => {
+    const newItems = data.PhysicalConnection.filter(
+      (item) => item["connectionName"] !== name
+    );
+    // setDevices(newItems);
+    setData((data) => ({ ...data, PhysicalConnection: newItems }));
   };
   return (
     <div>
@@ -55,7 +85,8 @@ export default function PhysicalConnectionForm() {
               labelId="select-connection-source-label"
               id="select-connection-source"
               variant="outlined"
-              // onChange={handleChange}
+              name="sources"
+              onChange={handleInputChange}
             >
               {initialPhysicalConnectionValues.sources.map((t) => (
                 <MenuItem key={t} value={t}>
@@ -70,8 +101,8 @@ export default function PhysicalConnectionForm() {
               labelId="select-connection-target-label"
               id="select-connection-target"
               variant="outlined"
-
-              // onChange={handleChange}
+              name="targets"
+              onChange={handleInputChange}
             >
               {initialPhysicalConnectionValues.targets.map((t) => (
                 <MenuItem key={t} value={t}>
@@ -86,7 +117,8 @@ export default function PhysicalConnectionForm() {
               labelId="select-connection-type-label"
               id="select-connection-type"
               variant="outlined"
-              // onChange={handleChange}
+              name="type"
+              onChange={handleInputChange}
             >
               {initialPhysicalConnectionValues.type.map((t) => (
                 <MenuItem key={t} value={t}>
@@ -98,23 +130,24 @@ export default function PhysicalConnectionForm() {
           <FormControl component="fieldset" className={classes.formControl}>
             <FormLabel component="legend">Lock</FormLabel>
             <RadioGroup
+              id="radio-group-lock"
               aria-label="gender"
-              name="gender1"
-              value={selectedAccessValue}
-              onChange={handleChange}
+              name="lock"
+              value={values.lock}
+              onChange={handleInputChange}
             >
               <FormControlLabel
-                value="female"
+                value="one sided"
                 control={<Radio size="small" />}
                 label="one sided"
               />
               <FormControlLabel
-                value="male"
+                value="two sided"
                 control={<Radio size="small" />}
                 label="two sided"
               />
               <FormControlLabel
-                value="other"
+                value="no"
                 control={<Radio size="small" />}
                 label="no"
               />
@@ -122,14 +155,16 @@ export default function PhysicalConnectionForm() {
           </FormControl>
         </div>
         <div>
-          <Button type="submit" color="primary">
+          <Button color="primary" onClick={handleAdd}>
             Add
-          </Button>
-          <Button type="submit" color="primary">
-            Delete
           </Button>
         </div>
       </Form>
+      <CList
+        items={data.PhysicalConnection}
+        name="connectionName"
+        handleChildDelete={handleDelete}
+      ></CList>
     </div>
   );
 }
