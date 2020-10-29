@@ -30,6 +30,8 @@ export default function SpaceForm() {
       //   setSpaces((spaces) => [...spaces, values]);
       setData((data) => ({ ...data, Spaces: [...data.Spaces, values] }));
     }
+    // reset the form to default state
+    setValues(initialSpaceValues);
   };
   //handle delete and pass it as a prop
   const handleDelete = (name) => {

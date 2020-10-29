@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Select,
   MenuItem,
@@ -10,29 +10,65 @@ import {
   Radio,
   Typography,
   Button,
+  TextField,
 } from "@material-ui/core/";
 import useStyles from "./useStyles";
 import { useForm, Form } from "./useForm";
+import { CList } from "../components/controls/List";
+import { UserContext } from "../UserContext";
+import { CancelScheduleSend } from "@material-ui/icons";
 
 const initialCyberConnectionValues = {
+  cyberConnectionName: "",
   sources: ["device1", "device2", "device3"],
   targets: ["device1", "device2", "device3"],
   networks: ["WIFI", "bluetooth"],
   securityTypes: ["Google", "Amazon"],
+  securityLevel: "",
 };
 export default function CyberConnectionForm() {
   const classes = useStyles();
+  const { data, setData } = useContext(UserContext);
   const { values, setValues, handleInputChange } = useForm(
     initialCyberConnectionValues
   );
-
+  if (data.Devices.length > 0) {
+    initialCyberConnectionValues.sources = data.Devices.map(
+      (a) => a.deviceName
+    );
+    initialCyberConnectionValues.targets = data.Devices.map(
+      (a) => a.deviceName
+    );
+  }
   const [selectedTargets, setSelectedTargets] = useState([]);
   const handleTargetChange = (event) => {
     setSelectedTargets(event.target.value);
+    setValues((values) => ({ ...values, targets: event.target.value }));
   };
-  const [selectedNetworkSecurity, setSelectedNetworkSecurity] = useState("");
-  const handleChange = (event) => {
-    setSelectedNetworkSecurity(event.target.value);
+
+  const handleAdd = (event) => {
+    // check for duplicates
+
+    // if (spaces.some((item) => values["spaceName"] === item["spaceName"])) {
+    //   setIsInputInvalid(true);
+    //   //   return;
+    // } else {
+    //   setIsInputInvalid(false);
+    //   setSpaces((spaces) => [...spaces, values]);
+    // }
+    setData((data) => ({
+      ...data,
+      CyberConnections: [...data.CyberConnections, values],
+    }));
+    setValues(initialCyberConnectionValues);
+    setSelectedTargets([]);
+  };
+  const handleDelete = (name) => {
+    const newItems = data.CyberConnections.filter(
+      (item) => item["cyberConnectionName"] !== name
+    );
+    // setDevices(newItems);
+    setData((data) => ({ ...data, CyberConnections: newItems }));
   };
   return (
     <div>
@@ -41,13 +77,24 @@ export default function CyberConnectionForm() {
       </Typography>
       <Form>
         <div>
+          <TextField
+            label="Connection Name"
+            margin="normal"
+            name="cyberConnectionName"
+            value={values.cyberConnectionName}
+            onChange={handleInputChange}
+          ></TextField>
+        </div>
+        <div>
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel id="select-connection-source-label">Source</InputLabel>
             <Select
               labelId="select-connection-source-label"
               id="select-connection-source"
               variant="outlined"
-              // onChange={handleChange}
+              name="sources"
+              value={values.sources}
+              onChange={handleInputChange}
             >
               {initialCyberConnectionValues.sources.map((t) => (
                 <MenuItem key={t} value={t}>
@@ -79,7 +126,9 @@ export default function CyberConnectionForm() {
               labelId="select-connection-type-label"
               id="select-connection-type"
               variant="outlined"
-              // onChange={handleChange}
+              name="networks"
+              value={values.networks}
+              onChange={handleInputChange}
             >
               {initialCyberConnectionValues.networks.map((t) => (
                 <MenuItem key={t} value={t}>
@@ -96,7 +145,9 @@ export default function CyberConnectionForm() {
               labelId="select-cacc-security-label"
               id="select-acc-security"
               variant="outlined"
-              // onChange={handleChange}
+              name="securityTypes"
+              value={values.securityTypes}
+              onChange={handleInputChange}
             >
               {initialCyberConnectionValues.securityTypes.map((t) => (
                 <MenuItem key={t} value={t}>
@@ -109,9 +160,9 @@ export default function CyberConnectionForm() {
             <FormLabel component="legend">Network Security</FormLabel>
             <RadioGroup
               aria-label="gender"
-              name="gender1"
-              value={selectedNetworkSecurity}
-              onChange={handleChange}
+              name="securityLevel"
+              value={values.securityLevel}
+              onChange={handleInputChange}
             >
               <FormControlLabel
                 value="weak"
@@ -132,14 +183,16 @@ export default function CyberConnectionForm() {
           </FormControl>
         </div>
         <div>
-          <Button type="submit" color="primary">
+          <Button color="primary" onClick={handleAdd}>
             Add
-          </Button>
-          <Button type="submit" color="primary">
-            Delete
           </Button>
         </div>
       </Form>
+      <CList
+        items={data.CyberConnections}
+        name="cyberConnectionName"
+        handleChildDelete={handleDelete}
+      ></CList>
     </div>
   );
 }

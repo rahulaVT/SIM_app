@@ -53,8 +53,7 @@ export default function PhysicalConnectionForm() {
       ...data,
       PhysicalConnection: [...data.PhysicalConnection, values],
     }));
-    // setDevices((devices) => [...devices, values]);
-    // setData((data)=>({}))
+    setValues(initialPhysicalConnectionValues);
   };
   const handleDelete = (name) => {
     const newItems = data.PhysicalConnection.filter(
@@ -86,6 +85,7 @@ export default function PhysicalConnectionForm() {
               id="select-connection-source"
               variant="outlined"
               name="sources"
+              values={values.sources}
               onChange={handleInputChange}
             >
               {initialPhysicalConnectionValues.sources.map((t) => (
@@ -102,6 +102,7 @@ export default function PhysicalConnectionForm() {
               id="select-connection-target"
               variant="outlined"
               name="targets"
+              value={values.targets}
               onChange={handleInputChange}
             >
               {initialPhysicalConnectionValues.targets.map((t) => (
@@ -118,6 +119,7 @@ export default function PhysicalConnectionForm() {
               id="select-connection-type"
               variant="outlined"
               name="type"
+              value={values.type}
               onChange={handleInputChange}
             >
               {initialPhysicalConnectionValues.type.map((t) => (

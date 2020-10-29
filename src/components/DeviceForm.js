@@ -55,8 +55,9 @@ export default function DeviceForm() {
     //   setSpaces((spaces) => [...spaces, values]);
     // }
     setData((data) => ({ ...data, Devices: [...data.Devices, values] }));
-    // setDevices((devices) => [...devices, values]);
-    // setData((data)=>({}))
+    setValues(initialDeviceValues);
+    setSelectedNetworks([]);
+    setSelectedVisibility([]);
   };
   const handleDelete = (name) => {
     const newItems = data.Devices.filter((item) => item["deviceName"] !== name);
@@ -86,6 +87,7 @@ export default function DeviceForm() {
               id="select-device-type"
               variant="outlined"
               name="type"
+              value={values.type}
               onChange={handleInputChange}
             >
               {initialDeviceValues.type.map((t) => (
@@ -103,7 +105,9 @@ export default function DeviceForm() {
               labelId="select-device-type-label"
               id="select-device-placement"
               variant="outlined"
-              // onChange={handleChange}
+              name="placement"
+              value={values.placement}
+              onChange={handleInputChange}
             >
               {initialDeviceValues.placement.map((t) => (
                 <MenuItem key={t} value={t}>
