@@ -33,7 +33,7 @@ export default function DeviceForm() {
   }
   const classes = useStyles();
   const { values, setValues, handleInputChange } = useForm(initialDeviceValues);
-
+  const [isInputInvalid, setIsInputInvalid] = useState(false);
   const [selectedNetworks, setSelectedNetworks] = useState([]);
   const [selectedVisibility, setSelectedVisibility] = useState([]);
   const handleNetworkChange = (event) => {
@@ -47,14 +47,16 @@ export default function DeviceForm() {
   const handleAdd = (event) => {
     // check for duplicates
 
-    // if (spaces.some((item) => values["spaceName"] === item["spaceName"])) {
-    //   setIsInputInvalid(true);
-    //   //   return;
-    // } else {
-    //   setIsInputInvalid(false);
-    //   setSpaces((spaces) => [...spaces, values]);
-    // }
-    setData((data) => ({ ...data, Devices: [...data.Devices, values] }));
+    if (
+      data.Devices.some((item) => values["deviceName"] === item["deviceName"])
+    ) {
+      setIsInputInvalid(true);
+      //   return;
+    } else {
+      setIsInputInvalid(false);
+      setData((data) => ({ ...data, Devices: [...data.Devices, values] }));
+    }
+    // resent form values
     setValues(initialDeviceValues);
     setSelectedNetworks([]);
     setSelectedVisibility([]);
@@ -77,6 +79,8 @@ export default function DeviceForm() {
             name="deviceName"
             value={values.deviceName}
             onChange={handleInputChange}
+            error={isInputInvalid}
+            helperText={isInputInvalid && "name should be unique"}
           ></TextField>
         </div>
         <div>

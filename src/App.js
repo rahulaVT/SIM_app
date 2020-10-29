@@ -28,7 +28,7 @@ function App() {
   const [data, setData] = useState({
     Spaces: [],
     Devices: [],
-    PhysicalConnection: [],
+    PhysicalConnections: [],
     CyberConnections: [],
   });
   const handleSaveToPC = (jsonData, filename) => {

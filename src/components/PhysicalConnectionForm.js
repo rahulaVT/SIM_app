@@ -18,7 +18,7 @@ import { CList } from "../components/controls/List";
 import { UserContext } from "../UserContext";
 
 const initialPhysicalConnectionValues = {
-  connectionName: "",
+  connectionName: "pc_0",
   sources: ["space1", "space2", "space3"],
   targets: ["space1", "space2", "space3"],
   type: ["door", "window"],
@@ -39,28 +39,27 @@ export default function PhysicalConnectionForm() {
       (a) => a.spaceName
     );
   }
-  const handleAdd = (event) => {
-    // check for duplicates
 
-    // if (spaces.some((item) => values["spaceName"] === item["spaceName"])) {
-    //   setIsInputInvalid(true);
-    //   //   return;
-    // } else {
-    //   setIsInputInvalid(false);
-    //   setSpaces((spaces) => [...spaces, values]);
-    // }
+  const handleAdd = (event) => {
+    // auto generate connection name based on length of the list
+    let newValues = {
+      values,
+      connectionName: "pc_" + (data.PhysicalConnections.length + 1),
+    };
+
     setData((data) => ({
       ...data,
-      PhysicalConnection: [...data.PhysicalConnection, values],
+      PhysicalConnections: [...data.PhysicalConnections, newValues],
     }));
     setValues(initialPhysicalConnectionValues);
   };
+
   const handleDelete = (name) => {
-    const newItems = data.PhysicalConnection.filter(
+    const newItems = data.PhysicalConnections.filter(
       (item) => item["connectionName"] !== name
     );
     // setDevices(newItems);
-    setData((data) => ({ ...data, PhysicalConnection: newItems }));
+    setData((data) => ({ ...data, PhysicalConnections: newItems }));
   };
   return (
     <div>
@@ -68,15 +67,18 @@ export default function PhysicalConnectionForm() {
         Create Physical Connection
       </Typography>
       <Form>
-        <div>
+        {/* <div>
           <TextField
             label="Connection Name"
             margin="normal"
             name="connectionName"
+            variant="filled"
+            // disabled={true}
+            // defaultValue="hello"
             value={values.connectionName}
-            onChange={handleInputChange}
+            onChange={handleUpdate}
           ></TextField>
-        </div>
+        </div> */}
         <div>
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel id="select-connection-source-label">Source</InputLabel>
@@ -163,7 +165,7 @@ export default function PhysicalConnectionForm() {
         </div>
       </Form>
       <CList
-        items={data.PhysicalConnection}
+        items={data.PhysicalConnections}
         name="connectionName"
         handleChildDelete={handleDelete}
       ></CList>

@@ -16,10 +16,9 @@ import useStyles from "./useStyles";
 import { useForm, Form } from "./useForm";
 import { CList } from "../components/controls/List";
 import { UserContext } from "../UserContext";
-import { CancelScheduleSend } from "@material-ui/icons";
 
 const initialCyberConnectionValues = {
-  cyberConnectionName: "",
+  cyberConnectionName: "cc_0",
   sources: ["device1", "device2", "device3"],
   targets: ["device1", "device2", "device3"],
   networks: ["WIFI", "bluetooth"],
@@ -47,18 +46,13 @@ export default function CyberConnectionForm() {
   };
 
   const handleAdd = (event) => {
-    // check for duplicates
-
-    // if (spaces.some((item) => values["spaceName"] === item["spaceName"])) {
-    //   setIsInputInvalid(true);
-    //   //   return;
-    // } else {
-    //   setIsInputInvalid(false);
-    //   setSpaces((spaces) => [...spaces, values]);
-    // }
+    let newValues = {
+      values,
+      cyberConnectionName: "cc_" + (data.CyberConnections.length + 1),
+    };
     setData((data) => ({
       ...data,
-      CyberConnections: [...data.CyberConnections, values],
+      CyberConnections: [...data.CyberConnections, newValues],
     }));
     setValues(initialCyberConnectionValues);
     setSelectedTargets([]);
@@ -76,7 +70,7 @@ export default function CyberConnectionForm() {
         Create Cyber Connection
       </Typography>
       <Form>
-        <div>
+        {/* <div>
           <TextField
             label="Connection Name"
             margin="normal"
@@ -84,7 +78,7 @@ export default function CyberConnectionForm() {
             value={values.cyberConnectionName}
             onChange={handleInputChange}
           ></TextField>
-        </div>
+        </div> */}
         <div>
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel id="select-connection-source-label">Source</InputLabel>
