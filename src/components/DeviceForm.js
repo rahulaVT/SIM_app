@@ -66,6 +66,20 @@ export default function DeviceForm() {
     // setDevices(newItems);
     setData((data) => ({ ...data, Devices: newItems }));
   };
+
+  const handleEdit = (name) => {
+    // fill the form
+    let oldValues = data.Devices.filter((r) => r.deviceName === name)[0];
+    // oldValues.area = parseInt(oldValues.area);
+    // oldValues.level = parseInt(oldValues.level);
+    // console.log("oldvalues");
+    // console.log(oldValues);
+    setValues(oldValues);
+
+    // delete current values
+    handleDelete(oldValues.deviceName);
+  };
+
   return (
     <div>
       <Typography className={classes.title} color="textPrimary" gutterBottom>
@@ -180,6 +194,7 @@ export default function DeviceForm() {
         items={data.Devices}
         name="deviceName"
         handleChildDelete={handleDelete}
+        handleChildEdit={handleEdit}
       ></CList>
     </div>
   );

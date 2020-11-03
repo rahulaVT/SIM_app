@@ -47,7 +47,7 @@ export default function CyberConnectionForm() {
 
   const handleAdd = (event) => {
     let newValues = {
-      values,
+      ...values,
       cyberConnectionName: "cc_" + (data.CyberConnections.length + 1),
     };
     setData((data) => ({
@@ -63,6 +63,17 @@ export default function CyberConnectionForm() {
     );
     // setDevices(newItems);
     setData((data) => ({ ...data, CyberConnections: newItems }));
+  };
+  const handleEdit = (name) => {
+    // fill the form
+    let oldValues = data.CyberConnections.filter(
+      (r) => r.cyberConnectionName === name
+    )[0];
+
+    setValues(oldValues);
+
+    // delete current values
+    handleDelete(oldValues.cyberConnectionName);
   };
   return (
     <div>
@@ -186,6 +197,7 @@ export default function CyberConnectionForm() {
         items={data.CyberConnections}
         name="cyberConnectionName"
         handleChildDelete={handleDelete}
+        handleChildEdit={handleEdit}
       ></CList>
     </div>
   );

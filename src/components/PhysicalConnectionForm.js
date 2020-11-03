@@ -43,7 +43,7 @@ export default function PhysicalConnectionForm() {
   const handleAdd = (event) => {
     // auto generate connection name based on length of the list
     let newValues = {
-      values,
+      ...values,
       connectionName: "pc_" + (data.PhysicalConnections.length + 1),
     };
 
@@ -61,6 +61,18 @@ export default function PhysicalConnectionForm() {
     // setDevices(newItems);
     setData((data) => ({ ...data, PhysicalConnections: newItems }));
   };
+  const handleEdit = (name) => {
+    // fill the form
+    let oldValues = data.PhysicalConnections.filter(
+      (r) => r.connectionName === name
+    )[0];
+
+    setValues(oldValues);
+
+    // delete current values
+    handleDelete(oldValues.connectionName);
+  };
+
   return (
     <div>
       <Typography className={classes.title} color="textPrimary" gutterBottom>
@@ -168,6 +180,7 @@ export default function PhysicalConnectionForm() {
         items={data.PhysicalConnections}
         name="connectionName"
         handleChildDelete={handleDelete}
+        handleChildEdit={handleEdit}
       ></CList>
     </div>
   );

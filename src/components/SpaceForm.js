@@ -38,7 +38,18 @@ export default function SpaceForm() {
     const newItems = data.Spaces.filter((item) => item["spaceName"] !== name);
     setData((data) => ({ ...data, Spaces: newItems }));
   };
+  const handleEdit = (name) => {
+    // fill the form
+    let oldValues = data.Spaces.filter((r) => r.spaceName === name)[0];
+    oldValues.area = parseInt(oldValues.area);
+    oldValues.level = parseInt(oldValues.level);
+    // console.log("oldvalues");
+    // console.log(oldValues);
+    setValues(oldValues);
 
+    // delete current values
+    handleDelete(oldValues.spaceName);
+  };
   return (
     <div>
       <Typography className={classes.title} color="textPrimary" gutterBottom>
@@ -92,6 +103,7 @@ export default function SpaceForm() {
         items={data.Spaces}
         name="spaceName"
         handleChildDelete={handleDelete}
+        handleChildEdit={handleEdit}
       ></CList>
     </div>
   );

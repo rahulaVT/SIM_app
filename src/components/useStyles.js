@@ -15,4 +15,7 @@ export default makeStyles((theme) => ({
   title: {
     fontSize: 18,
   },
+  secondaryAction: {
+    paddingRight: 40,
+  },
 }));
