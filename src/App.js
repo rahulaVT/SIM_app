@@ -43,6 +43,16 @@ function App() {
   const handleSubmit = () => {
     handleSaveToPC(data, "simData");
   };
+  const handleLoad = ({ target }) => {
+    //
+    const fileReader = new FileReader();
+    fileReader.readAsText(target.files[0]);
+    fileReader.onload = (e) => {
+      console.log(JSON.parse(e.target.result));
+      setData(JSON.parse(e.target.result));
+    };
+    // console.log(e.target.result);
+  };
   return (
     <div className="App">
       <UserContext.Provider value={{ data, setData }}>
@@ -69,7 +79,23 @@ function App() {
           </Grid>
         </Grid>
       </UserContext.Provider>
-      <Button onClick={handleSubmit}>Submit</Button>
+      <Button color="primary" variant="outlined" onClick={handleSubmit}>
+        Submit
+      </Button>
+
+      <input
+        style={{ display: "none" }}
+        id="upload-data"
+        name="upload-data"
+        type="file"
+        onChange={handleLoad}
+        accept="application/json"
+      />
+      <label htmlFor="upload-data">
+        <Button color="secondary" variant="outlined" component="span">
+          Load data
+        </Button>
+      </label>
     </div>
   );
 }
