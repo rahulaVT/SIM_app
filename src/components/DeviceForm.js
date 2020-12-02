@@ -18,7 +18,7 @@ import { UserContext } from "../UserContext";
 let initialDeviceValues = {
   id: 0,
   deviceName: "",
-  type: ["type1", "type2"],
+  type: ["sensor", "camera","controlled device","central control"],
   placement: ["space1", "space2"],
   networks: ["WIFI", "bluetooth", "Google", "Amazon", "FB portal"],
   visibility: ["space1", "space2", "space3"],
