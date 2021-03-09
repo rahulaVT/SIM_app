@@ -20,8 +20,9 @@ let initialDeviceValues = {
   deviceName: "",
   type: ["sensor", "camera","controlled device","central control"],
   placement: ["space1", "space2"],
-  networks: ["WIFI", "bluetooth", "Google", "Amazon", "FB portal"],
+  networks: ["WIFI", "bluetooth", "Z-Wave", "Zigbee"],
   visibility: ["space1", "space2", "space3"],
+  monitoring:[]
 };
 const initialDevices = [];
 export default function DeviceForm() {
@@ -30,12 +31,19 @@ export default function DeviceForm() {
   if (data.Spaces.length > 0) {
     initialDeviceValues.placement = data.Spaces.map((a) => a.spaceName);
     initialDeviceValues.visibility = data.Spaces.map((a) => a.spaceName);
+    initialDeviceValues.monitoring = data.Spaces.map((a) => a.spaceName);
   }
   const classes = useStyles();
   const { values, setValues, handleInputChange } = useForm(initialDeviceValues);
   const [isInputInvalid, setIsInputInvalid] = useState(false);
   const [selectedNetworks, setSelectedNetworks] = useState([]);
   const [selectedVisibility, setSelectedVisibility] = useState([]);
+  const [selectedMonitoringSpaces, setMonitoringSpaces] = useState([]);
+  const handleMonitoringChange = (event) => {
+    setMonitoringSpaces(event.target.value);
+    setValues((values) => ({ ...values, monitoring: event.target.value }));
+  };
+  
   const handleNetworkChange = (event) => {
     setSelectedNetworks(event.target.value);
     setValues((values) => ({ ...values, networks: event.target.value }));
@@ -60,11 +68,16 @@ export default function DeviceForm() {
     setValues(initialDeviceValues);
     setSelectedNetworks([]);
     setSelectedVisibility([]);
+    setMonitoringSpaces([]);
   };
   const handleDelete = (name) => {
     const newItems = data.Devices.filter((item) => item["deviceName"] !== name);
     // setDevices(newItems);
     setData((data) => ({ ...data, Devices: newItems }));
+    setValues(initialDeviceValues);
+    setSelectedNetworks([]);
+    setSelectedVisibility([]);
+    setMonitoringSpaces([]);
   };
 
   const handleEdit = (name) => {
@@ -176,6 +189,29 @@ export default function DeviceForm() {
                   //   style={getStyles(name, personName, theme)}
                 >
                   {network}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel id="select-mutiple-network-label">Monitoring Spaces</InputLabel>
+            <Select
+              labelId="select-mutiple-monitoring-spaces-label"
+              id="select-mutiple-monitoring-spaces"
+              multiple
+              value={selectedMonitoringSpaces}
+              onChange={handleMonitoringChange}
+              input={<Input />}
+              //   MenuProps={MenuProps}
+            >
+              {initialDeviceValues.monitoring.map((monitoring) => (
+                <MenuItem
+                  key={monitoring}
+                  value={monitoring}
+                  //   style={getStyles(name, personName, theme)}
+                >
+                  {monitoring}
                 </MenuItem>
               ))}
             </Select>

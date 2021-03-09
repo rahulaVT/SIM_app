@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Button, TextField, Typography } from "@material-ui/core";
+import { Button, TextField, Typography, Checkbox, FormControlLabel } from "@material-ui/core";
 
 import { useForm, Form } from "./useForm";
 import styles from "./useStyles";
@@ -10,6 +10,8 @@ const initialSpaceValues = {
   spaceName: "",
   area: 0,
   level: 0,
+  window:false,
+  occupied:false
 };
 // const initialSpaces = [];
 export default function SpaceForm() {
@@ -18,6 +20,11 @@ export default function SpaceForm() {
   const { values, setValues, handleInputChange } = useForm(initialSpaceValues);
   //   const [spaces, setSpaces] = useState(initialSpaces);
   const [isInputInvalid, setIsInputInvalid] = useState(false);
+  
+  const handleCheckbox = (event) =>{
+    // setWindowCheckbox(event.target.checked);
+    setValues((values) => ({ ...values, [event.target.name]: event.target.checked }));
+  }
 
   const handleAdd = (event) => {
     // check for duplicates
@@ -89,6 +96,16 @@ export default function SpaceForm() {
             id={values.spaceName}
             onChange={handleInputChange}
           ></TextField>
+        </div>
+        <div>
+          <FormControlLabel
+          control={<Checkbox checked={values.window} onChange={handleCheckbox} name="window" id={values.spaceName} />}
+          label="Window present"
+        />
+        <FormControlLabel
+          control={<Checkbox checked={values.occupied} onChange={handleCheckbox} name="occupied" id={values.spaceName} />}
+          label="Occupied"
+        />
         </div>
         <div>
           <Button color="primary" onClick={handleAdd}>

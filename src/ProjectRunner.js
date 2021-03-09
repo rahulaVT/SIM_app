@@ -1,6 +1,7 @@
 const SpaceNode = require('./model/SpaceNode.js');
 const DeviceNode = require('./model/DeviceNode.js');
 const LinkedList = require('./LinkedList.js');
+const Queue = require("./Queue.js");
 
 const data = {
     "Spaces": [
@@ -31,19 +32,19 @@ const data = {
     ],
     "Devices": [
         {
-            "deviceName": "dv1",
-            "type": "type2",
-            "placement": "bedroom2",
+            "deviceName": "Nest WIFI",
+            "type": "central control",
+            "placement": "livingroom",
             "networks": [
                 "WIFI",
                 "Google"
             ],
-            "visibility": []
+            "visibility": ["outside"]
         },
         {
-            "deviceName": "dv2",
-            "type": "type2",
-            "placement": "bedroom1",
+            "deviceName": "Nest X Yale Lock",
+            "type": "controlled",
+            "placement": "livingroom",
             "networks": [
                 "WIFI",
                 "Google"
@@ -67,18 +68,26 @@ const data = {
             "type": "door",
             "lock": "one sided",
             "id": ""
+        },
+        {
+            "connectionName": "pc_3",
+            "sources": "bedroom2",
+            "targets": "livingroom",
+            "type": "door",
+            "lock": "one sided",
+            "id": ""
         }
     ],
     "CyberConnections": [
         {
             "cyberConnectionName": "cc_1",
-            "sources": "dv1",
+            "sources": "Nest X Yale Lock",
             "targets": [
-                "dv1"
+                "Nest WIFI"
             ],
             "networks": "WIFI",
-            "securityTypes": "Amazon",
-            "securityLevel": "weak",
+            "securityTypes": "Google",
+            "securityLevel": "medium",
             "id": ""
         }
     ]
@@ -177,6 +186,22 @@ class Graph{
         });
         console.log(graph);
      }
+     BFS(node) {
+        let q = new Queue(this.nodes.length);
+        let explored = new Set();
+        q.enqueue(node);
+        explored.add(node);
+        while (!q.isEmpty()) {
+           let t = q.dequeue();
+           console.log(t);
+           if(this.edges[t.name]){
+           this.edges[t.name].filter(n => !explored.has(n)).forEach(n => {
+              explored.add(n);
+              q.enqueue(n);
+           });
+        }
+        }
+    }
 }
 let g = new Graph();
 let node_dict = {};
@@ -189,7 +214,12 @@ data['Spaces'].forEach(space => {
 });
 // adding physical connections as edges
 data['PhysicalConnections'].forEach(pconn => {
-    g.addDirectedEdge(node_dict[pconn['sources']],node_dict[pconn['targets']]);
+    if (pconn.lock === "one sided"){
+        g.addDirectedEdge(node_dict[pconn['sources']],node_dict[pconn['targets']])
+    }
+    else{
+        g.addEdge(node_dict[pconn['sources']],node_dict[pconn['targets']])
+    }
 });
 
 let h = new Graph();
@@ -209,5 +239,30 @@ data['CyberConnections'].forEach(cconn => {
     
 });
 
+let breach_time = {"Nest X Yale Lock":30, "hubvoice control":30}
+let attack_type = {"central control":"hubvoice control"};
+
+
+let path = ""
+h.nodes.forEach(device => {
+    if(device.visibility){
+        // an attack can pe performed
+        device.visibility.forEach(visible_from => {
+            // try different attacks
+            if(attack_type[device.type]){
+                // console.log(device.type);
+                path += visible_from+ ": "+ breach_time[attack_type[device.type]] + ": "+ device.name
+            }
+
+        });
+        // check with other devices the breached device is connected to
+        // if(h.edges[device.name]){
+        //     console.log(h.edges[device.name]);
+        // }
+    }
+});
+
 g.display();
 h.display();
+console.log(path);
+// h.BFS(node_dict['bedroom1']);
