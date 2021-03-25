@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./App.css";
 
 import { makeStyles } from "@material-ui/styles";
-import { Button, Grid, Paper } from "@material-ui/core";
+import { Button, Grid, Paper, List,ListItem, ListItemText } from "@material-ui/core";
 import SpaceForm from "./components/SpaceForm";
 import DeviceForm from "./components/DeviceForm";
 import PhysicalConnectionForm from "./components/PhysicalConnectionForm";
 import CyberConnectionForm from "./components/CyberConnectionForm";
 import { UserContext } from "./UserContext";
+import OutputForm from "./components/OutputForm";
+
+const axios = require('axios')
 const fs = require("fs");
 const flex = {
   alignItems: "left",
@@ -22,7 +25,23 @@ const useStyles = makeStyles({
     maxWidth: 400,
   },
 });
+let axiosConfig = {
+  headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+      "Access-Control-Allow-Origin": "*",
+  }
+};
 
+const fetchAttacks = (data) =>{
+  return axios.post('http://localhost:5000/run', data, axiosConfig)
+  .then(function (response) {
+    // console.log(response);
+    return response
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+}
 function App() {
   const classes = useStyles();
   const [data, setData] = useState({
@@ -53,6 +72,14 @@ function App() {
     };
     // console.log(e.target.result);
   };
+ 
+  const [output,setOutput] = useState([]);
+  const handleRun = () =>{
+    fetchAttacks(data).then((randomData)=>{
+      setOutput(randomData.data.attacks);
+    });
+    
+  }
   return (
     <div className="App">
       <UserContext.Provider value={{ data, setData }}>
@@ -82,6 +109,9 @@ function App() {
       <Button color="primary" variant="outlined" onClick={handleSubmit}>
         Submit
       </Button>
+      <Button color="primary" variant="outlined" onClick={handleRun}>
+        Run Simulation
+      </Button>
 
       <input
         style={{ display: "none" }}
@@ -96,6 +126,7 @@ function App() {
           Load data
         </Button>
       </label>
+      <OutputForm attacks={output} data={data} />
     </div>
   );
 }
