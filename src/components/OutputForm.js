@@ -31,13 +31,16 @@ export default function OutputForm(props) {
     // const { data, setData } = useContext(UserContext);
     const {attacks,data} = props;
     const [newData, setNewData] = useState(initialAttackData)
-    const handleClick = (attack) => {
+    const [selectedIndex, setSelectedIndex] = useState();
+    const handleClick = (attack, index) => {
       // console.log("clicked",attack,graph);
       // console.log("combined",{"graph":data,"attacks":attack});
 
       fetchTransformedAttacks({"graph":data,"attacks":attack}).then((randomData)=>{
         setNewData(randomData.data);
-        console.log("final",randomData);
+        setSelectedIndex(index);
+        // console.log("final",randomData);
+
       });
 
     }
@@ -47,7 +50,9 @@ export default function OutputForm(props) {
             <Grid item md={2}>
               <List component="nav" aria-label="secondary mailbox folders">
               {attacks.map((item,i)=>(
-                  <ListItem key={i} button onClick={handleClick.bind(this,item)}>
+                  <ListItem key={i} button 
+                    selected = {selectedIndex === i}
+                    onClick={handleClick.bind(this,item,i)}>
                   <ListItemText primary={item} />
                 </ListItem>
               ))}

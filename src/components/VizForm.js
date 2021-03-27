@@ -16,6 +16,7 @@ export default function VizForm(props) {
           const margin = { top: 20, right: 20, bottom: 30, left: 40 };
           const links_spaces = data.edges.map(d => Object.create(d));
           const links_output = data.links.map(d => Object.create(d));
+          svg.selectAll("*").remove();
           
           const simulation = d3.forceSimulation(data.vertices)
                 .force("spring", d3.forceLink(data.edges.concat(data.links))
