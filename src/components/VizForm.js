@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { useD3 } from './useD3';
 
 const colorScale = d3.scaleOrdinal()
-.domain(["outside","device","space"])
+.domain(["Outside","device","space"])
 .range(['#fbb4ae','#b3cde3','#ccebc5']);
 
 export default function VizForm(props) {
@@ -17,7 +17,7 @@ export default function VizForm(props) {
           const links_spaces = data.edges.map(d => Object.create(d));
           const links_output = data.links.map(d => Object.create(d));
           svg.selectAll("*").remove();
-          
+
           const simulation = d3.forceSimulation(data.vertices)
                 .force("spring", d3.forceLink(data.edges.concat(data.links))
                        .id(v => v.name)
@@ -99,7 +99,7 @@ export default function VizForm(props) {
               return "node type" + d.group
           });
             node.filter(function(d){
-                if (d.group==='device' || d.group ==='outside'){return d}
+                if (d.group==='device' || d.group ==='Outside'){return d}
                 }).append("circle")
               .attr("class", function (d) {
               return "node type" + d.group
@@ -196,8 +196,95 @@ export default function VizForm(props) {
                 
             });
             simulation.on('tick')() 
-        }//end
-      );
+            const legend_g = svg.selectAll(".legend")
+            .data(colorScale.domain().filter(function(value, index, arr){ 
+                    return value !="space";
+            })) // removing space from the domain because it needs to be a rectangle
+            .enter().append("g") 
+            .attr("transform", (d, i) => `translate(${width-50},${20+ i * 20})`); 
+
+            legend_g.append("circle")
+                .attr("cx", 0)
+                .attr("cy", 0)
+                .attr("r", 5)
+                .attr('stroke','black')
+                .attr("fill", colorScale);
+            
+            legend_g.append("text")
+                .attr("x", 10)
+                .attr("y", 5)
+                .text(d => d);
+            
+            const legend_rect = svg.append("g") 
+            //.attr("transform", (d, i) => `translate(${width},${i * 20})`); 
+            .attr("transform", `translate(${width-50}, 60)`);
+            
+            legend_rect.append("rect")
+                .attr("x",-5)
+                .attr('y',-5)
+                .attr('width',10)
+                .attr('height',10)
+                .attr('fill',"#ccebc5")
+                .attr('stroke','black')
+            legend_rect.append("text")
+                .attr("x", 10)
+                .attr("y", 5)
+                .text("space");
+            
+            const legend_g2 = svg.append("g") 
+            //.attr("transform", (d, i) => `translate(${width},${i * 20})`); 
+            .attr("transform", `translate(${width-60}, 100)`);
+            
+            legend_g2.append("line")
+                .attr("x1", 0)
+                .attr("y1", 0)
+                .attr("x2", 20)
+                .attr("y2", 0)
+                .style("stroke", "grey")
+                .attr('stroke-width',1.5)
+            
+            legend_g2.append("text")
+                .attr("x",22)
+                .attr("y",0)
+                .text("physical edge");
+            
+            legend_g2.append("line")
+                .attr("x1", 0)
+                .attr("y1", 25)
+                .attr("x2", 20)
+                .attr("y2", 25)
+                .style("stroke", "grey")
+                .style("stroke-dasharray",4)
+            legend_g2.append("text")
+                .attr("x",24)
+                .attr("y",25)
+                .text("cyber edge");
+            
+            legend_g2.append("line")
+                .attr("x1", 0)
+                .attr("y1", 50)
+                .attr("x2", 20)
+                .attr("y2", 50)
+                .style("stroke", "green")
+                .style('stroke-width', 0.5)
+            legend_g2.append("text")
+                .attr("x",25)
+                .attr("y",50)
+                .text("containment edge");
+            
+            legend_g2.append("line")
+                .attr("x1", 0)
+                .attr("y1", 75)
+                .attr("x2", 20)
+                .attr("y2", 75)
+                .style("stroke", "black")
+                .style('stroke-width', 2)
+            legend_g2.append("text")
+                .attr("x",25)
+                .attr("y",77)
+                .text("attack path");
+                    }//end
+                );
     
       return (
         <svg

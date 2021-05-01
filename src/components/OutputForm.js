@@ -58,7 +58,7 @@ export default function OutputForm(props) {
               ))}
             </List>
             </Grid>
-            <Grid item xl={3}>
+            <Grid item xl={4}>
                 <VizForm data={newData}/>
             </Grid>
           </Grid>

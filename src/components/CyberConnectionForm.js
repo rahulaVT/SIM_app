@@ -21,7 +21,7 @@ const initialCyberConnectionValues = {
   cyberConnectionName: "cc_0",
   sources: ["device1", "device2", "device3"],
   targets: ["device1", "device2", "device3"],
-  networks: ["WIFI", "bluetooth"],
+  networks: ["WIFI", "bluetooth", "Z-Wave", "Zigbee"],
   securityTypes: ["Google", "Amazon"],
   securityLevel: "",
 };

@@ -1,0 +1,105 @@
+{
+    "Spaces": [
+        {
+            "id": "Outside",
+            "spaceName": "Outside",
+            "area": "1",
+            "level": "1",
+            "window": false
+        },
+        {
+            "id": "room1",
+            "spaceName": "bedroom1",
+            "area": "1.2",
+            "level": "1",
+            "window": true
+        },
+        {
+            "id": "room2",
+            "spaceName": "bedroom2",
+            "area": "1.5",
+            "level": "1",
+            "window": true
+        },
+        {
+            "id": "livingroom",
+            "spaceName": "livingroom",
+            "area": "2",
+            "level": "1",
+            "window": true
+        }
+    ],
+    "Devices": [
+        {
+            "deviceName": "Gateway",
+            "type": "central control",
+            "placement": "livingroom",
+            "networks": [
+                "WIFI",
+                "Z-Wave"
+            ],
+            "visibility": ["Outside"],
+            "monitoring":[]
+        },
+        {
+            "deviceName": "smart speaker",
+            "type": "controlled",
+            "placement": "bedroom1",
+            "networks": [
+                "WIFI",
+                "Z-Wave"
+            ],
+            "visibility": [],
+            "monitoring":[]
+        },
+        {
+            "deviceName": "Smart lock",
+            "type": "controlled",
+            "placement": "livingroom",
+            "networks": [
+                "WIFI",
+                "Z-Wave"
+            ],
+            "visibility": [],
+            "monitoring":[]
+        },
+        {
+            "deviceName": "smart camera",
+            "type": "controlled",
+            "placement": "bedroom1",
+            "networks": [
+                "WIFI",
+                "Z-Wave"
+            ],
+            "visibility": [],
+            "monitoring":[]
+        }
+    ],
+    "PhysicalConnections": [
+        
+    ],
+    "CyberConnections": [
+        {
+            "cyberConnectionName": "cc_1",
+            "sources": "Smart lock",
+            "targets": [
+                "Gateway"
+            ],
+            "networks": "WIFI",
+            "securityTypes": "Google",
+            "securityLevel": "medium",
+            "id": ""
+        },
+        {
+            "cyberConnectionName": "cc_2",
+            "sources": "smart speaker",
+            "targets": [
+                "Gateway"
+            ],
+            "networks": "WIFI",
+            "securityTypes": "Google",
+            "securityLevel": "medium",
+            "id": ""
+        }
+    ]
+}

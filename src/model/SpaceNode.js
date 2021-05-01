@@ -5,5 +5,7 @@ module.exports = class SpaceNode {
       this.level = parseInt(data.level);
       this.contains = [];
       this.nextElement = null;
+      this.window = false;
+      this.occupied = false;
     }
   }

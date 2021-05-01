@@ -16,7 +16,6 @@ import { CList } from "../components/controls/List";
 import { UserContext } from "../UserContext";
 
 let initialDeviceValues = {
-  id: 0,
   deviceName: "",
   type: ["sensor", "camera","controlled device","central control"],
   placement: ["space1", "space2"],
@@ -85,10 +84,10 @@ export default function DeviceForm() {
     let oldValues = data.Devices.filter((r) => r.deviceName === name)[0];
     // oldValues.area = parseInt(oldValues.area);
     // oldValues.level = parseInt(oldValues.level);
-    // console.log("oldvalues");
-    // console.log(oldValues);
+    console.log("oldvalues");
+    
     setValues(oldValues);
-
+    console.log(values);
     // delete current values
     handleDelete(oldValues.deviceName);
   };
