@@ -216,6 +216,14 @@ class RunSim:
         return all_paths
     
     def tranformAttackPaths(self,data,attack):
+        '''
+            converts a string of attack path into a graph format which is compatible 
+            for D3 force directed graph viz
+            input: data(json input graph), attack(string)
+            output: output graph (json)
+        '''
+        
+        # assigning groups to differentiate nodes with different colors
         for i in data['Spaces']:
             i['group']='space' if i['spaceName']!='Outside' else 'Outside'
             i['name'] = i['spaceName']
@@ -225,7 +233,7 @@ class RunSim:
             i['name'] = i['deviceName']
 
         final = {"vertices":data['Spaces']+data['Devices']}
-
+        # edges represent physical and cyber connections
         edges = []
         # adding all cyber connection
         for i in data['CyberConnections']:
@@ -238,30 +246,39 @@ class RunSim:
         # adding all containment connections
         for i in data['Devices']:
             edges.append({'source':i['placement'],'target':i['deviceName'],'distance':15,'group':3})    
-
+            
+        # links show attack paths 
         links = []
+        # attack string format - "target_node:attack_difficulty:attack_type:attack_path"
         attack_split = attack.split(':')
         path_list = attack_split[-1].strip()[:-1].split(',')
+        # for nodes in the attack path adjacent nodes become source and target respectively
         for i in range(len(path_list)-1):
+            # if there is a break-in through window, we extract the space name since nodes in graph
+            # have space names
             source = path_list[i].split('window')[0].strip()
             target = path_list[i+1].split('window')[0].strip()
 #             if "physical" in attack_split[2]:
 #                 target = target.split(' ')[0]
+            # assigning link distance as 20 (can be experimented with for better viz) 
+            # also initializing the attack type only for the first node which has been targeted
+            # the attack type will be displayed on the link in the output graph
             links.append({'source':source,'target':target,'distance':20,'group':4,
                           'attack':attack_split[2]+attack_split[1] if i==0 else ''})
-
+            
+        # assigning the targeted node which will be highlighted in the graph
         for i in final['vertices']:
             if i['name'] == attack_split[0].strip():
                 i['attacked']=True
             else:
                 i['attacked']=False
-
         final['edges']=edges
 
         final['links']=links
         return final
     
     def main(self,data):
+        
         g = Graph()
         # create space vertices
         for s in data['Spaces']:
@@ -285,14 +302,19 @@ class RunSim:
         # add edges between devices and spaces by checking where they are placed
         for d in data['Devices']:
             g.add_directed_edge(d['placement'],d['deviceName'])
-                
+            
+        # reads the excel file in the current folder
         df_attack = pd.read_excel('attack_models.xls',sheet_name='Sheet2')
+        
+        # splits multiple values and converts it into a list
         df_attack['Communication protocol'] = df_attack['Communication protocol'].map(lambda x: x.split(','))
         df_attack['Smart home solution'] = df_attack['Smart home solution'].map(lambda x: x.split(','))
         
         # not taking outside node into consideration
         vertices = [v for v in g if v.data.name!='outside']
         candidate_paths = []
+        # for every combination of start and end nodes generate path. 
+        # TODO: logic can be improved 
         for v in vertices:
             for u in vertices:
                 temp = self.generatePaths(u,v)

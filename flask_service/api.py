@@ -14,14 +14,22 @@ def home():
 
 @app.route('/run', methods=['POST'])
 def fetchAttacks():
+    '''
+        POST api which takes user input json on run simulation click 
+        return all attack paths 
+    '''
     import json
     import runSimulation as rs
     data = request.json
     obj = rs.RunSim()
+    # calling the main function to run the simulation
     return jsonify(obj.main(data))
 
 @app.route('/display', methods=['POST'])
 def transformAttacks():
+    '''
+        POST api to convert an attack path into a graph for visualization
+    '''
     import json
     import runSimulation as rs
     data = request.json
